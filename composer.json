@@ -1,0 +1,22 @@
+{
+    "name": "culturekings/shopify-app-auth-laravel",
+    "description": "Shopify OAuth App for Laravel 5.x",
+    "type": "library",
+    "authors": [
+        {
+            "name": "Culture Kings",
+            "email": "j.bird@culturekings.com.au"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "CultureKings\\ShopifyAuth\\": "src/",
+            "CultureKings\\Tests\\": "tests/"
+        }
+    },
+    "require": {
+        "php": ">=5.6.4",
+        "oseintow/laravel-shopify": "^1.0",
+        "illuminate/http": "^5.4"
+    }
+}
