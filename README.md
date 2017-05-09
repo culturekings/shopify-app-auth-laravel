@@ -27,3 +27,14 @@ You can change this to be whatever you like so you can run multiple apps through
     'secret' => env("SHOPIFY_APPNAME_SECRET"),
 ],
 ```
+
+## Usage
+All shopify calls should be made through a service and make a call similar to below:
+```php
+$this->shopify
+    ->setKey($shopifyAppConfig['key'])
+    ->setSecret($shopifyAppConfig['secret'])
+    ->setShopUrl($shopUrl)
+    ->setAccessToken($accessToken)
+    ->post('admin/script_tags.json', $scriptTags);
+```
