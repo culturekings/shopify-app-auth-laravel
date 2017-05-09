@@ -22,6 +22,10 @@ class AuthController
         $shopifyAppConfig = config('shopify-auth.'.$appName);
         $shopUrl = $request->get('shop');
 
+        if (!$shopUrl) {
+            abort(401, 'No shop url set, cannot authorize.');
+        }
+
         $scope = $shopifyAppConfig['scope'];
         $redirectUrl = url($shopifyAppConfig['redirect_url']);
 
