@@ -6,6 +6,6 @@ Route::group(['namespace' => 'CultureKings\ShopifyAuth\Http\Controllers'], funct
     Route::get('shopify-auth/{appName}/auth/callback', 'AuthController@processOAuthResultRedirect');
 });
 
-Route::group(['namespace' => 'CultureKings\ShopifyAuth\Http\Controllers', 'middleware' => 'web'], function () {
+Route::group(['namespace' => 'CultureKings\ShopifyAuth\Http\Controllers', 'middleware' => ['web', 'CultureKings\ShopifyAuth\Http\Middleware\ShopifyAuthCheck']], function () {
     Route::get('shopify-auth/{appName}/install/success', 'AuthController@getSuccessPage');
 });
