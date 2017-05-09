@@ -2,10 +2,13 @@
     "name": "culturekings/shopify-app-auth-laravel",
     "description": "Shopify OAuth App for Laravel 5.x",
     "type": "library",
+    "license": "MIT",
     "authors": [
         {
             "name": "Culture Kings",
-            "email": "j.bird@culturekings.com.au"
+            "email": "j.bird@culturekings.com.au",
+            "homepage": "https://culturekings.com.au",
+            "role": "Developer"
         }
     ],
     "autoload": {
