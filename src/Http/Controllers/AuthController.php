@@ -46,7 +46,7 @@ class AuthController
         // Save into DB
         $this->shopifyAuthService->getAccessTokenAndCreateNewUser($code, $shopUrl, $shopifyAppConfig);
 
-        return redirect()->to($shopifyAppConfig['success_url'] . '?shop=' . $shopUrl)->with('shopUrl', $shopUrl);
+        return redirect()->to($shopifyAppConfig['success_url'] . '?shop=' . $shopUrl . '&appName=' . $appName)->with('shopUrl', $shopUrl);
     }
 
     public function getSuccessPage($appName)
