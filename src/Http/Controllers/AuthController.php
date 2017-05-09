@@ -49,6 +49,13 @@ class AuthController
         return redirect()->to($shopifyAppConfig['success_url'])->with('shopUrl', $shopUrl);
     }
 
+    public function getSuccessPage($appName)
+    {
+        $shopifyAppConfig = config('shopify-auth.'.$appName);
+
+        return view($shopifyAppConfig['name'] . '.install-success');
+    }
+
     public function disableUserOnUninstallWebhookHandle()
     {
         // @todo

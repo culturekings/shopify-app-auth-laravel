@@ -12,6 +12,13 @@ Add to Providers in config/app.php
 ### Publish
 `php artisan vendor:publish`
 
+### Setup Views
+#### Install Success page
+In your resources/views folder, create a folder the same name as your app name you set below (name field). E.g. "app_name".
+
+Within that folder, create a view called "install-success.blade.php" with the success page and instructions to whatever you want to do next.
+
+
 ### Configure App in config
 Once published, set up your app.
 
