@@ -2,6 +2,11 @@
 Laravel Auth Boilerplate for Shopify App
 
 ## Installation
+### Add to Providers
+
+Add to Providers in config/app.php
+`CultureKings\ShopifyAuth\ShopifyAuthServiceProvider::class`
+
 ### Publish
 `php artisan vendor:publish`
 
