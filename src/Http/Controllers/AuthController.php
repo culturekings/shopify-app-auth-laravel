@@ -3,6 +3,7 @@ namespace CultureKings\ShopifyAuth\Http\Controllers;
 
 use CultureKings\ShopifyAuth\Services\ShopifyAuthService;
 use Illuminate\Http\Request;
+use Oseintow\Shopify\Shopify;
 
 class AuthController
 {
@@ -21,33 +22,30 @@ class AuthController
         $shopifyAppConfig = config('shopify-auth.'.$appName);
         $shopUrl = $request->get('shop');
 
-        $scope = [
-            "write_products",
-            "write_script_tags"
-        ];
-
-        $redirectUrl = url('/launch-countdown/auth/shopify/callback');
+        $scope = $shopifyAppConfig['scope'];
+        $redirectUrl = url($shopifyAppConfig['redirect_url']);
 
         $shopify = $this->shopify
-            ->setKey($this->shopifyAppConfig['key'])
-            ->setSecret($this->shopifyAppConfig['secret'])
+            ->setKey($shopifyAppConfig['key'])
+            ->setSecret($shopifyAppConfig['secret'])
             ->setShopUrl($shopUrl);
 
         return redirect()->to($shopify->getAuthorizeUrl($scope, $redirectUrl));
     }
 
-    public function processOAuthResultRedirect(Request $request)
+    public function processOAuthResultRedirect(Request $request, $appName)
     {
+        $shopifyAppConfig = config('shopify-auth.'.$appName);
         $code = $request->get('code');
         $shopUrl = $request->get('shop');
 
         // Save into DB
-        $shopifyUser = $this->shopifyAuthService->getAccessTokenAndCreateNewUser($code, $shopUrl, $this->shopifyAppConfig);
+        $shopifyUser = $this->shopifyAuthService->getAccessTokenAndCreateNewUser($code, $shopUrl, $shopifyAppConfig);
 
         // create shopify script tag for shop and store
         $this->createLaunchCountdownScriptTag($shopUrl, $shopifyUser->access_token, $shopifyUser);
 
-        return redirect()->to('/launch-countdown/install/success?shop=' . $shopUrl)->with('shopUrl', $shopUrl);
+        return redirect()->to($shopifyAppConfig['success_url'])->with('shopUrl', $shopUrl);
     }
 
     public function disableUserOnUninstallWebhookHandle()

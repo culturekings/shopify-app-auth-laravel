@@ -20,17 +20,11 @@ class PortalsServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        // load controller
-
-        // routes
         $this->loadRoutesFrom(__DIR__.'/routes/web.php');
 
         $this->publishes([
             __DIR__.'/config/shopify-auth.php' => config_path('shopify-auth.php'),
         ]);
-
-        // copy config to user
-
 
         $this->loadMigrationsFrom(__DIR__.'/Migrations');
     }
