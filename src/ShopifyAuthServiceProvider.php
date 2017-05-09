@@ -35,10 +35,7 @@ class ShopifyAuthServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        /*
-	     * Register the service provider for the dependency.
-	     */
-        // $this->app->register(ShoppingcartServiceProvider::class);
+
     }
 
 }
