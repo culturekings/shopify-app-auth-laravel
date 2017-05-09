@@ -3,7 +3,7 @@ Laravel Auth Boilerplate for Shopify App
 
 ## Installation
 ### Publish
-php artisan vendor:publish
+`php artisan vendor:publish`
 
 ### Configure App in config
 Once published, set up your app.
