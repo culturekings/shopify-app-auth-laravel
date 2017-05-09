@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Middleware;
+namespace CultureKings\ShopifyAuth\Http\Middleware;
 
 use CultureKings\ShopifyAuth\Models\ShopifyUser;
 use Closure;
