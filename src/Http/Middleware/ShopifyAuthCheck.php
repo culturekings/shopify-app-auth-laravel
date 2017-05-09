@@ -45,6 +45,7 @@ class ShopifyAuthCheck
             $request->session()->put('shopifyapp', [
                 'shop_url' => $shopifyUser->shop_url,
                 'access_token' => $shopifyUser->access_token,
+                'app_name' => $shopifyUser->app_name,
             ]);
         }
 
