@@ -50,7 +50,7 @@ class ShopifyAuthService
         return $shopifyUser;
     }
 
-    public function createScriptTag($shopUrl, $accessToken, $shopifyUser, array $scriptTags, $shopifyAppConfig)
+    public function createScriptTagIfNotInDatabase($shopUrl, $accessToken, $shopifyUser, array $scriptTags, $shopifyAppConfig)
     {
         // if script tag already exists in DB, return true
         foreach ($shopifyUser->scriptTags as $tag) {
