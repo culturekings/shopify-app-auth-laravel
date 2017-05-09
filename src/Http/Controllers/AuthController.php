@@ -42,9 +42,6 @@ class AuthController
         // Save into DB
         $shopifyUser = $this->shopifyAuthService->getAccessTokenAndCreateNewUser($code, $shopUrl, $shopifyAppConfig);
 
-        // create shopify script tag for shop and store
-        $this->createLaunchCountdownScriptTag($shopUrl, $shopifyUser->access_token, $shopifyUser);
-
         return redirect()->to($shopifyAppConfig['success_url'])->with('shopUrl', $shopUrl);
     }
 
