@@ -44,7 +44,7 @@ class AuthController
         $shopUrl = $request->get('shop');
 
         // Save into DB
-        $shopifyUser = $this->shopifyAuthService->getAccessTokenAndCreateNewUser($code, $shopUrl, $shopifyAppConfig);
+        $this->shopifyAuthService->getAccessTokenAndCreateNewUser($code, $shopUrl, $shopifyAppConfig);
 
         return redirect()->to($shopifyAppConfig['success_url'] . '?shop=' . $shopUrl)->with('shopUrl', $shopUrl);
     }

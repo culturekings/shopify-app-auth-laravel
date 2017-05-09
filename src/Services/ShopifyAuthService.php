@@ -12,14 +12,11 @@ use Oseintow\Shopify\Shopify;
  */
 class ShopifyAuthService
 {
-    protected $logger;
     protected $shopify;
 
     public function __construct(
-        Illuminate\Log\Writer $logger,
         Shopify $shopify
     ) {
-        $this->logger = $logger;
         $this->shopify = $shopify;
     }
 
@@ -41,6 +38,7 @@ class ShopifyAuthService
                 'shop_url' => $shopUrl,
                 'shop_name' => '',
                 'shop_domain' => '',
+                'app_name' => $shopifyAppConfig['name'],
                 'access_token' => $accessToken,
             ]);
         } else {
@@ -52,11 +50,11 @@ class ShopifyAuthService
         return $shopifyUser;
     }
 
-    public function createScriptTag($shopUrl, $accessToken, $shopifyUser, string $appName, array $scriptTags, $shopifyAppConfig)
+    public function createScriptTag($shopUrl, $accessToken, $shopifyUser, array $scriptTags, $shopifyAppConfig)
     {
         // if script tag already exists in DB, return true
         foreach ($shopifyUser->scriptTags as $tag) {
-            if ($tag->shopify_app === $appName) return true;
+            if ($tag->shopify_app === $shopifyAppConfig['name']) return true;
         }
 
         $scriptTag = $this->shopify
