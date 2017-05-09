@@ -2,9 +2,8 @@
 namespace CultureKings\ShopifyAuth;
 
 use Illuminate\Support\ServiceProvider;
-use AmaGroup\Portals\Models\Portals;
 
-class PortalsServiceProvider extends ServiceProvider
+class ShopifyAuthServiceProvider extends ServiceProvider
 {
     /**
      * Indicates if loading of the provider is deferred.
