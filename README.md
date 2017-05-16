@@ -56,13 +56,58 @@ You can change this to be whatever you like so you can run multiple apps through
 ],
 ```
 
+
 ## Usage
 All shopify calls should be made through a service and make a call similar to below:
 ```php
+// $appName comes from url passed into method as param
+$shopifyAppConfig = config('shopify-auth.'.$appName);
+
+/ call shopify api
 $this->shopify
     ->setKey($shopifyAppConfig['key'])
     ->setSecret($shopifyAppConfig['secret'])
     ->setShopUrl($shopUrl)
     ->setAccessToken($accessToken)
     ->post('admin/script_tags.json', $scriptTags);
+```
+
+### Authenticate Shop App
+Navigate to: `http://exampledomain.dev/shopify-auth/app_name/install?shop=shopifydomain.myshopify.com`
+
+It will then redirect you to your shops auth process to start
+
+
+### Common Controller Setup
+I'd generally use this as the construct:
+```php
+public function __construct(ShopifyApi $shopify, Request $request, ShopifyAuthService $shopifyAuthService)
+{
+     $this->shopify = $shopify;
+     $this->shopifySession = $request->session()->get('shopifyapp');
+     $this->shopifyAuthService = $shopifyAuthService;
+ }
+```
+
+Then set up a method:
+```php
+public function getDashboard()
+{
+    $shopUrl = $this->shopifySession['shop_url'];
+    $appName = $this->shopifySession['app_name'];
+
+    // find user, then get countdowns based on that
+    $user = ShopifyUser::where([
+        'shop_url' => $shopUrl,
+        'app_name' => $appName,
+    ])->first();
+
+    $appConfig = config('shopify-auth.' . $appName);
+
+    $this->checkExistsAndCreateScriptTag($shopUrl, $user->access_token, $user, $appName);
+
+    return view('app_name.dashboard')->with([
+        'app_key' => config($appConfig['key']),
+    ]);
+}
 ```
