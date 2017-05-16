@@ -4,13 +4,13 @@ namespace CultureKings\ShopifyAuth\Http\Middleware;
 
 use CultureKings\ShopifyAuth\Models\ShopifyUser;
 use Closure;
-use Oseintow\Shopify\Shopify;
+use CultureKings\ShopifyAuth\ShopifyAuth;
 
 class ShopifyAuthCheck
 {
     protected $shopify;
 
-    public function __construct(Shopify $shopify)
+    public function __construct(ShopifyAuth $shopify)
     {
         $this->shopify = $shopify;
     }
@@ -49,9 +49,11 @@ class ShopifyAuthCheck
             ]);
         }
 
-//        if (!config('app.debug') && !$this->shopify->verifyRequest($request->getQueryString())) {
-//            return response('Verification Failed. Unauthorised.', 401);
-//        }
+        dd($request);
+
+        if (!config('app.debug') && !$this->shopify->verifyRequest($request->getQueryString())) {
+            return response('Verification Failed. Unauthorised.', 401);
+        }
 
         return $next($request);
     }

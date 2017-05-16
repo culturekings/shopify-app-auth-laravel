@@ -19,7 +19,8 @@
     },
     "require": {
         "php": ">=5.6.4",
-        "oseintow/laravel-shopify": "^1.0",
+        "guzzlehttp/guzzle": "^6.2",
+        "illuminate/support": "^5.4",
         "illuminate/http": "^5.4",
         "illuminate/database": "^5.4"
     }

@@ -5,7 +5,7 @@ namespace CultureKings\ShopifyAuth\Services;
 use CultureKings\ShopifyAuth\Models\ShopifyScriptTag;
 use CultureKings\ShopifyAuth\Models\ShopifyUser;
 use Illuminate;
-use Oseintow\Shopify\Shopify;
+use CultureKings\ShopifyAuth\ShopifyAuth;
 
 /**
  * Class ShopifyAuthService.
@@ -15,7 +15,7 @@ class ShopifyAuthService
     protected $shopify;
 
     public function __construct(
-        Shopify $shopify
+        ShopifyAuth $shopify
     ) {
         $this->shopify = $shopify;
     }

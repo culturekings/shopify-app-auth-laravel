@@ -26,6 +26,8 @@ class ShopifyAuthServiceProvider extends ServiceProvider
         ]);
 
         $this->loadMigrationsFrom(__DIR__.'/Migrations');
+
+        $this->app->alias('ShopifyAuth', 'CultureKings\ShopifyAuth\Facades\ShopifyAuth');
     }
 
     /**
@@ -35,7 +37,9 @@ class ShopifyAuthServiceProvider extends ServiceProvider
      */
     public function register()
     {
-
+        $this->app->singleton(ShopifyAuth::class, function($app) {
+            return new ShopifyAuth(new \GuzzleHttp\Client);
+        });
     }
 
 }

@@ -18,6 +18,20 @@ In your resources/views folder, create a folder the same name as your app name y
 
 Within that folder, create a view called "install-success.blade.php" with the success page and instructions to whatever you want to do next.
 
+### Auth Middleware
+Set the middleware on routes - ensure that ShopifyAuthCheck if sitting around the routes. Web too, but I think that is standard in the web.php file.
+```php
+Route::group(
+    [
+        'prefix' => 'shopify-apps',
+        'namespace' => 'ShopifyApps',
+        'middleware' => 'CultureKings\ShopifyAuth\Http\Middleware\ShopifyAuthCheck'
+    ],
+    function () {
+        Route::get('appname', 'AppnameController@getDashboard');
+    }
+);
+```
 
 ### Configure App in config
 Once published, set up your app.
