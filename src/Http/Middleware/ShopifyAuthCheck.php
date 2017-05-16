@@ -29,8 +29,19 @@ class ShopifyAuthCheck
             return abort(401, 'Shop key missing and no active session!');
         }
 
+        $reSetSession = false;
+
+        // recheck session if set
+        if (null !== ($request->get('shop')) && $request->session()->has('shopifyapp')) {
+            $shopifyUser = ShopifyUser::where('shop_url', $request->get('shop'))->first();
+
+            if ($shopifyUser->access_token !== $request->session()->get('shopifyapp')['access_token']) {
+                $reSetSession = true;
+            }
+        }
+
         // If no session, get user & set one
-        if (!$request->session()->has('shopifyapp')) {
+        if (!$request->session()->has('shopifyapp') || $reSetSession) {
             $shopifyUser = ShopifyUser::where('shop_url', $request->get('shop'))->first();
 
             if (!$shopifyUser) {
