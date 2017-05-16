@@ -2,8 +2,8 @@
 namespace CultureKings\ShopifyAuth\Http\Controllers;
 
 use CultureKings\ShopifyAuth\Services\ShopifyAuthService;
+use CultureKings\ShopifyAuth\ShopifyApi;
 use Illuminate\Http\Request;
-use Oseintow\Shopify\ShopifyAuth;
 
 class AuthController
 {
@@ -11,7 +11,7 @@ class AuthController
     protected $shopifyAuthService;
     protected $shopifyAppConfig;
 
-    public function __construct(ShopifyAuth $shopify, ShopifyAuthService $shopifyAuthService)
+    public function __construct(ShopifyApi $shopify, ShopifyAuthService $shopifyAuthService)
     {
         $this->shopify = $shopify;
         $this->shopifyAuthService = $shopifyAuthService;
