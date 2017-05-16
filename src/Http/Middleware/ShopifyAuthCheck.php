@@ -4,13 +4,13 @@ namespace CultureKings\ShopifyAuth\Http\Middleware;
 
 use CultureKings\ShopifyAuth\Models\ShopifyUser;
 use Closure;
-use CultureKings\ShopifyAuth\ShopifyAuth;
+use CultureKings\ShopifyAuth\ShopifyApi;
 
 class ShopifyAuthCheck
 {
     protected $shopify;
 
-    public function __construct(ShopifyAuth $shopify)
+    public function __construct(ShopifyApi $shopify)
     {
         $this->shopify = $shopify;
     }
