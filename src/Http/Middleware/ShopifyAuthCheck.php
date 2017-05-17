@@ -58,10 +58,10 @@ class ShopifyAuthCheck
                 'access_token' => $shopifyUser->access_token,
                 'app_name' => $shopifyUser->app_name,
             ]);
-        }
 
-        if (null !== $request->query('hmac') && !$this->shopify->verifyRequest($request->getQueryString())) {
-            return response('Verification of HMAC Failed. Unauthorised.', 401);
+            if (null !== $request->query('hmac') && !$this->shopify->verifyRequest($request->query->all(), $request->getQueryString())) {
+                return response('Verification of HMAC Failed. Unauthorised.', 401);
+            }
         }
 
         return $next($request);

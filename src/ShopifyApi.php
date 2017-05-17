@@ -63,14 +63,14 @@ class ShopifyApi
 
         return $this;
     }
-    
+
     public function setKey($key)
     {
         $this->key = $key;
 
         return $this;
     }
-    
+
     public function setSecret($secret)
     {
         $this->secret = $secret;
@@ -117,11 +117,11 @@ class ShopifyApi
     {
         $query = in_array($method, ['get','delete']) ? "query" : "json";
         $response = $this->client->request(strtoupper($method), $this->baseUrl().$uri, [
-                'headers' => array_merge($headers, $this->requestHeaders),
-                $query => $params,
-                'timeout' => 60.0,
-                'http_errors' => false
-            ]);
+            'headers' => array_merge($headers, $this->requestHeaders),
+            $query => $params,
+            'timeout' => 60.0,
+            'http_errors' => false
+        ]);
 
         $this->parseResponse($response);
         $responseBody = $this->responseBody($response);
@@ -147,37 +147,54 @@ class ShopifyApi
         $this->setReasonPhrase($response->getReasonPhrase());
     }
 
-    public function verifyRequest($queryParams)
+    public function verifyRequest($queryArray, $queryString)
     {
-        if (is_string($queryParams)) {
-            $data = [];
-
-            $queryParams = explode('&', $queryParams);
-            foreach($queryParams as $queryParam)
-            {
-                list($key, $value) = explode('=', $queryParam);
-                $data[$key] = $value;
-            }
-
-            $queryParams = $data;
+        if (isset($queryArray['hmac'])) {
+            $hmac = $queryArray['hmac'];
+            $separator = '&';
+        } elseif (isset($queryArray['signature'])) {
+            $hmac = $queryArray['signature'];
+            $separator = '';
+        } else {
+            return true;
         }
 
-        $hmac = $queryParams['hmac'] ?? '';
+        /**
+         * Parse HTTP query string.
+         */
+        $params = [];
+        foreach (explode('&', urldecode($queryString)) as $part) {
+            list($key, $value) = explode('=', $part);
+            if (isset($params[$key])) {
+                if (!is_array($params[$key])) {
+                    $tmp = $params[$key];
+                    $params[$key] = [$tmp];
+                }
+                $params[$key][] = $value;
+            } else {
+                $params[$key] = $value;
+            }
+        }
+        unset($params['signature']);
+        unset($params['hmac']);
 
-        unset($queryParams['signature'], $queryParams['hmac']);
+        /**
+         * Re-build query string without signature or HMAC argument.
+         */
+        $query = [];
+        foreach ($params as $key => $value)
+        {
+            if (is_array($value)) {
+                $query[$key] = $key . '=' . implode(',', $value);
+            } else {
+                $query[$key] = $key . '=' . $value;
+            }
+        }
+        ksort($query);
 
-        ksort($queryParams);
+        $queryString = implode($separator, $query);
 
-        $params = collect($queryParams)->map(function($value, $key){
-            $key   = strtr($key, ['&' => '%26', '%' => '%25', '=' => '%3D']);
-            $value = strtr($value, ['&' => '%26', '%' => '%25']);
-
-            return $key . '=' . $value;
-        })->implode("&");
-
-        $calculatedHmac = hash_hmac('sha256', $params, $this->secret);
-
-        return hash_equals($hmac, $calculatedHmac);
+        return $hmac === hash_hmac('sha256', $queryString, $this->secret, false);
     }
 
     public function verifyWebHook($data, $hmacHeader)
