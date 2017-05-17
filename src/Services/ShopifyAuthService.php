@@ -38,11 +38,13 @@ class ShopifyAuthService
                 'shop_url' => $shopUrl,
                 'shop_name' => '',
                 'shop_domain' => '',
+                'scope' => implode(",", $shopifyAppConfig['scope']),
                 'app_name' => $shopifyAppConfig['name'],
                 'access_token' => $accessToken,
             ]);
         } else {
             $shopifyUser = $shopifyUser->first();
+            $shopifyUser->scope = implode(",", $shopifyAppConfig['scope']);
             $shopifyUser->access_token = $accessToken;
             $shopifyUser->save();
         }
