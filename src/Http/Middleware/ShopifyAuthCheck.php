@@ -45,7 +45,7 @@ class ShopifyAuthCheck
             $shopifyUser = ShopifyUser::where('shop_url', $request->get('shop'))->first();
 
             if (!$shopifyUser) {
-                return abort(401, 'No shopify user found and no active sessions');
+                return abort(403, 'No shopify user found and no active sessions');
             }
 
             $request->session()->put('shopifyapp', [
@@ -61,9 +61,14 @@ class ShopifyAuthCheck
                 'query-str' => $request->getQueryString(),
             ]);
 
-//            if (null !== $request->query('hmac') && !$this->shopify->verifyRequest($request->query->all(), $request->getQueryString())) {
-//                return response('Verification of HMAC Failed. Unauthorised.', 401);
-//            }
+            // set secret for hmac check
+            $appConfig = config('shopify-auth.' . $shopifyUser->app_name);
+            $this->shopify->setSecret($appConfig['secret']);
+
+            // check hmac
+            if (null !== $request->query('hmac') && !$this->shopify->verifyRequest($request->query->all(), $request->getQueryString())) {
+                return response('Verification of HMAC Failed. Unauthorised.', 401);
+            }
         }
 
         return $next($request);
