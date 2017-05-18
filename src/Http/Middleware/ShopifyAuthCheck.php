@@ -45,11 +45,6 @@ class ShopifyAuthCheck
             $shopifyUser = ShopifyUser::where('shop_url', $request->get('shop'))->first();
 
             if (!$shopifyUser) {
-                // if launch countdown app and not install page, redirect to install
-                if ($request->segment(1) === 'launch-countdown' && $request->segment(2) !== 'install') {
-                    return redirect('/launch-countdown/install?' . $request->getQueryString());
-                }
-
                 return abort(401, 'No shopify user found and no active sessions');
             }
 
@@ -59,9 +54,16 @@ class ShopifyAuthCheck
                 'app_name' => $shopifyUser->app_name,
             ]);
 
-            if (null !== $request->query('hmac') && !$this->shopify->verifyRequest($request->query->all(), $request->getQueryString())) {
-                return response('Verification of HMAC Failed. Unauthorised.', 401);
-            }
+            \Log::info('hmac', [
+               'hmac' => $request->query('hmac'),
+                'verify' => $this->shopify->verifyRequest($request->query->all(), $request->getQueryString()),
+                'query-all' => $request->query->all(),
+                'query-str' => $request->getQueryString(),
+            ]);
+
+//            if (null !== $request->query('hmac') && !$this->shopify->verifyRequest($request->query->all(), $request->getQueryString())) {
+//                return response('Verification of HMAC Failed. Unauthorised.', 401);
+//            }
         }
 
         return $next($request);
