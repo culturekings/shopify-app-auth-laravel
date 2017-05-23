@@ -70,7 +70,7 @@ class ShopifyAuthService
             'shop_url' => $shopUrl,
             'script_tag_id' => $scriptTag->get('id'),
             'shopify_users_id' => $shopifyUser->id,
-            'shopify_app' => 'launch_countdown',
+            'shopify_app' => $shopifyAppConfig['name'],
         ]);
 
         return true;
