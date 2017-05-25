@@ -4,14 +4,14 @@ namespace CultureKings\ShopifyAuth\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class ShopifyUser extends Model
+class ShopifyAppUsers extends Model
 {
     /**
      * The database table used by the model.
      *
      * @var string
      */
-    protected $table = 'shopify_users';
+    protected $table = 'shopify_apps_users';
 
     /**
      * The attributes that aren't mass assignable.
@@ -20,13 +20,13 @@ class ShopifyUser extends Model
      */
     protected $guarded = [];
 
-    public function scriptTags()
+    public function shopifyUser()
     {
-        return $this->hasMany(ShopifyScriptTag::class, 'shopify_users_id', 'id');
+        return $this->belongsTo(ShopifyUser::class, 'shopify_users_id', 'id');
     }
 
-    public function shopifyAppUsers()
+    public function shopifyApp()
     {
-        return $this->hasMany(ShopifyAppUsers::class, 'shopify_users_id', 'id');
+        return $this->belongsTo(ShopifyApp::class, 'shopify_app_id', 'id');
     }
 }

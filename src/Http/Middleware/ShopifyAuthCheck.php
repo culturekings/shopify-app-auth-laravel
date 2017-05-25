@@ -29,40 +29,53 @@ class ShopifyAuthCheck
             return abort(401, 'Shop key missing and no active session!');
         }
 
+        // Set appName based on whatever is around
+        if (!empty($request->get('appName'))) {
+            $appName = $request->get('appName');
+        } elseif (!empty($request->route('appName'))) {
+            $appName = $request->route('appName');
+        } else {
+            $appName = $request->segment(2);
+        }
+
         $reSetSession = false;
 
         // recheck session if set
         if (null !== ($request->get('shop')) && $request->session()->has('shopifyapp')) {
-            $shopifyUser = ShopifyUser::where('shop_url', $request->get('shop'))->first();
+            $shopifyUser = $this->getUser($request->get('shop'), $appName);
+            $shopifyApp = $shopifyUser->shopifyAppUsers->first();
+            $appSession = $request->session()->get('shopifyapp');
 
-            if ($shopifyUser->access_token !== $request->session()->get('shopifyapp')['access_token']) {
+            if ($shopifyApp->access_token !== $appSession['access_token']) {
                 $reSetSession = true;
             }
         }
 
         // If no session, get user & set one
         if (!$request->session()->has('shopifyapp') || $reSetSession) {
-            $shopifyUser = ShopifyUser::where('shop_url', $request->get('shop'))->first();
+            $shopUrl = $request->get('shop');
+            $shopifyUser = $this->getUser($shopUrl, $appName);
+            $shopifyApp = $shopifyUser->shopifyAppUsers->first();
 
             if (!$shopifyUser) {
                 return abort(403, 'No shopify user found and no active sessions');
             }
 
             $request->session()->put('shopifyapp', [
-                'shop_url' => $shopifyUser->shop_url,
-                'access_token' => $shopifyUser->access_token,
-                'app_name' => $shopifyUser->app_name,
+                'shop_url' => $shopUrl,
+                'access_token' => $shopifyApp->access_token,
+                'app_name' => $appName,
             ]);
 
             \Log::info('hmac', [
-               'hmac' => $request->query('hmac'),
+                'hmac' => $request->query('hmac'),
                 'verify' => $this->shopify->verifyRequest($request->query->all(), $request->getQueryString()),
                 'query-all' => $request->query->all(),
                 'query-str' => $request->getQueryString(),
             ]);
 
             // set secret for hmac check
-            $appConfig = config('shopify-auth.' . $shopifyUser->app_name);
+            $appConfig = config('shopify-auth.' . $appName);
             $this->shopify->setSecret($appConfig['secret']);
 
             // check hmac
@@ -72,5 +85,17 @@ class ShopifyAuthCheck
         }
 
         return $next($request);
+    }
+
+    private function getUser($shop, $appName)
+    {
+        return ShopifyUser::where('shop_url', $shop)
+            ->with([
+                'shopifyAppUsers' => function ($query) use ($appName) {
+                    $query->where('shopify_app_name', $appName);
+                }
+            ])
+            ->get()
+            ->first();
     }
 }

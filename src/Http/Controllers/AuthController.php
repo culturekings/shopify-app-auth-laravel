@@ -46,14 +46,21 @@ class AuthController
         // Save into DB
         $this->shopifyAuthService->getAccessTokenAndCreateNewUser($code, $shopUrl, $shopifyAppConfig);
 
-        return redirect()->to($shopifyAppConfig['success_url'] . '?shop=' . $shopUrl . '&appName=' . $appName)->with('shopUrl', $shopUrl);
+        // Build query string
+        $queryString = [
+            'shop' => $shopUrl,
+            'appName' => $appName,
+        ];
+        $queryString = http_build_query($queryString) . "\n";
+
+        return redirect()->to($shopifyAppConfig['success_url'] . '?' . $queryString)->with('shopUrl', $shopUrl);
     }
 
     public function getSuccessPage($appName)
     {
         $shopifyAppConfig = config('shopify-auth.'.$appName);
 
-        return view($shopifyAppConfig['name'] . '.install-success');
+        return view($shopifyAppConfig['view_install_success_path']);
     }
 
     public function disableUserOnUninstallWebhookHandle()
