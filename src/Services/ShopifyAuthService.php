@@ -2,6 +2,8 @@
 
 namespace CultureKings\ShopifyAuth\Services;
 
+use CultureKings\ShopifyAuth\Models\ShopifyApp;
+use CultureKings\ShopifyAuth\Models\ShopifyAppUsers;
 use CultureKings\ShopifyAuth\Models\ShopifyScriptTag;
 use CultureKings\ShopifyAuth\Models\ShopifyUser;
 use Illuminate;
@@ -38,16 +40,23 @@ class ShopifyAuthService
                 'shop_url' => $shopUrl,
                 'shop_name' => '',
                 'shop_domain' => '',
-                'scope' => implode(",", $shopifyAppConfig['scope']),
-                'app_name' => $shopifyAppConfig['name'],
-                'access_token' => $accessToken,
             ]);
         } else {
-            $shopifyUser = $shopifyUser->first();
-            $shopifyUser->scope = implode(",", $shopifyAppConfig['scope']);
-            $shopifyUser->access_token = $accessToken;
-            $shopifyUser->save();
+            $shopifyUser = $shopifyUser->get()->first();
         }
+
+        $shopifyApp = ShopifyApp::firstOrCreate([
+            'name' => $shopifyAppConfig['name'],
+            'slug' => $shopifyAppConfig['name'],
+        ]);
+
+        ShopifyAppUsers::firstOrCreate([
+            'shopify_users_id' => $shopifyUser->id,
+            'shopify_app_id' => $shopifyApp->id,
+            'access_token' => $accessToken,
+            'scope' => implode(",", $shopifyAppConfig['scope']),
+            'shopify_app_name' => $shopifyAppConfig['name'],
+        ]);
 
         return $shopifyUser;
     }
