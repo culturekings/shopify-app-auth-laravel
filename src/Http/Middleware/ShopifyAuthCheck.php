@@ -55,12 +55,12 @@ class ShopifyAuthCheck
         if (!$request->session()->has('shopifyapp') || $reSetSession) {
             $shopUrl = $request->get('shop');
             $shopifyUser = $this->getUser($shopUrl, $appName);
-            $shopifyApp = $shopifyUser->shopifyAppUsers->first();
 
             if (!$shopifyUser) {
                 return abort(403, 'No shopify user found and no active sessions');
             }
 
+            $shopifyApp = $shopifyUser->shopifyAppUsers->first();
             $request->session()->put('shopifyapp', [
                 'shop_url' => $shopUrl,
                 'access_token' => $shopifyApp->access_token,
