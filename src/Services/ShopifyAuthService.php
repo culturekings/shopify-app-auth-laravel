@@ -40,6 +40,8 @@ class ShopifyAuthService
                 'shop_url' => $shopUrl,
                 'shop_name' => '',
                 'shop_domain' => '',
+                'app_name' => '',
+                'access_token' => '',
             ]);
         } else {
             $shopifyUser = $shopifyUser->get()->first();
