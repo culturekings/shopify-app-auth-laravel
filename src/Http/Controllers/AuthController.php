@@ -84,6 +84,13 @@ class AuthController
 
         $user = ShopifyUser::where('shop_url', $shopUrl)->get()->first();
 
+        \Log::debug('test', [
+            'user' => $user,
+            'shop_url' => $shopUrl,
+            'request' => $request->all(),
+            'app name' => $appName,
+        ]);
+
         $userApps = ShopifyAppUsers::where([
             'shopify_app_name' => $appName,
             'shopify_users_id' => $user->id,
