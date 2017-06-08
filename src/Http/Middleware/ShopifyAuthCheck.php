@@ -54,7 +54,7 @@ class ShopifyAuthCheck
             }
         }
 
-        // If no session, get user & set one
+        // If no session, get user & set one 
         if (!$request->session()->has('shopifyapp') || $reSetSession) {
             $shopUrl = $request->get('shop');
             $shopifyUser = $this->shopifyAuthService->getUserForApp($shopUrl, $appName);
