@@ -12,8 +12,7 @@ class ShopifyAppUsers extends Model
      * @var string
      */
     protected $table = 'shopify_apps_users';
-
-    public $primary = 'shopify_app_id';
+    protected $primary = 'shopify_app_id';
 
     /**
      * The attributes that aren't mass assignable.
