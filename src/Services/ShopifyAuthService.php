@@ -91,7 +91,7 @@ class ShopifyAuthService
         return true;
     }
 
-    public function checkAndAddWebhookForUninstall($appName, $accessToken, $shopifyUser, $shopifyAppConfig)
+    public function checkAndAddWebhookForUninstall($shopUrl, $accessToken, $shopifyUser, $shopifyAppConfig)
     {
         // if webhook already exists in DB, return true
         foreach ($shopifyUser->webhooks as $hook) {
@@ -100,25 +100,25 @@ class ShopifyAuthService
 
         $uninstallWebhook = [
             "webhook" => [
-                "topic": "app/uninstalled",
-                "address": url('webhooks/' . $appName . '/uninstalled'),
-                "format": "json"
+                "topic" => "app/uninstalled",
+                "address" => url('webhooks/' . $shopifyAppConfig['name'] . '/uninstalled'),
+                "format" => "json"
             ],
         ];
 
-        ShopifyWebhooks::create([
-            'shop_url' => $shopUrl,
-            'webhook_id' => $scriptTag->get('id'),
-            'shopify_users_id' => $shopifyUser->id,
-            'shopify_app' => $shopifyAppConfig['name'],
-        ]);
-
-        $scriptTag = $this->shopify
+        $webhook = $this->shopify
             ->setKey($shopifyAppConfig['key'])
             ->setSecret($shopifyAppConfig['secret'])
             ->setShopUrl($shopUrl)
             ->setAccessToken($accessToken)
             ->post('admin/webhooks.json', $uninstallWebhook);
+
+        ShopifyWebhooks::create([
+            'shop_url' => $shopUrl,
+            'webhook_id' => $webhook->get('id'),
+            'shopify_users_id' => $shopifyUser->id,
+            'shopify_app' => $shopifyAppConfig['name'],
+        ]);
     }
 
     // returns user or null

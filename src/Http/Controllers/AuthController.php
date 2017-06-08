@@ -56,7 +56,7 @@ class AuthController
         $createUser = $this->shopifyAuthService->getAccessTokenAndCreateNewUser($code, $shopUrl, $shopifyAppConfig);
 
         // Create webhook to handle uninstallation
-        $this->shopifyAuthService->checkAndAddWebhookForUninstall($appName, $createUser['access_token'], $createUser['user'], $shopifyAppConfig);
+        $this->shopifyAuthService->checkAndAddWebhookForUninstall($shopUrl, $createUser['access_token'], $createUser['user'], $shopifyAppConfig);
 
         // Build query string
         $queryString = [
