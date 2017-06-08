@@ -40,9 +40,7 @@ class ShopifyAuthService
             $shopifyUser = ShopifyUser::updateOrCreate([
                 'shop_url' => $shopUrl,
                 'shop_name' => '',
-                'shop_domain' => '',
-                'app_name' => '',
-                'access_token' => '',
+                'shop_domain' => ''
             ]);
         } else {
             $shopifyUser = $shopifyUser->get()->first();
