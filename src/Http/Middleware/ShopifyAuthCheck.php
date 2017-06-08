@@ -46,7 +46,7 @@ class ShopifyAuthCheck
         // recheck session if set
         if (null !== ($request->get('shop')) && $request->session()->has('shopifyapp')) {
             $shopifyUser = $this->shopifyAuthService->getUserForApp($request->get('shop'), $appName);
-            $shopifyApp = $shopifyUser->shopifyAppUsers->first();
+            $shopifyApp = $shopifyUser->shopifyAppUsers->last();
             $appSession = $request->session()->get('shopifyapp');
 
             if ($shopifyApp->access_token !== $appSession['access_token']) {
@@ -63,7 +63,7 @@ class ShopifyAuthCheck
                 return abort(403, 'No shopify user found and no active sessions');
             }
 
-            $shopifyApp = $shopifyUser->shopifyAppUsers->first();
+            $shopifyApp = $shopifyUser->shopifyAppUsers->last();
             $request->session()->put('shopifyapp', [
                 'shop_url' => $shopUrl,
                 'access_token' => $shopifyApp->access_token,

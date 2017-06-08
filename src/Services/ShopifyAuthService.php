@@ -97,6 +97,6 @@ class ShopifyAuthService
                 }
             ])
             ->get()
-            ->first();
+            ->last();
     }
 }
