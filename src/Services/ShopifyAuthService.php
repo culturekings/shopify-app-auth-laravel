@@ -106,6 +106,8 @@ class ShopifyAuthService
             ],
         ];
 
+        \Log::debug('uninstall', $uninstallWebhook);
+
         $webhook = $this->shopify
             ->setKey($shopifyAppConfig['key'])
             ->setSecret($shopifyAppConfig['secret'])
