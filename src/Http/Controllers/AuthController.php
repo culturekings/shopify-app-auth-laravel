@@ -82,9 +82,11 @@ class AuthController
 
         \Log::info('handle uninstall webhook');
 
+        $user = ShopifyUser::where('shop_url', $shopUrl)->get()->first();
+
         $userApps = ShopifyAppUsers::where([
             'shopify_app_name' => $appName,
-            'shop_url'         => $shopUrl,
+            'shopify_users_id' => $user->id,
         ])->get();
         foreach ($userApps as $app) {
             $app->delete();
@@ -92,7 +94,7 @@ class AuthController
 
         $hooks = ShopifyWebhooks::where([
             'shopify_app' => $appName,
-            'shop_url'    => $shopUrl,
+            'shopify_users_id' => $user->id,
         ])->get();
         foreach ($hooks as $hook) {
             $hook->delete();
