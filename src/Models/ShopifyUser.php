@@ -25,6 +25,11 @@ class ShopifyUser extends Model
         return $this->hasMany(ShopifyScriptTag::class, 'shopify_users_id', 'id');
     }
 
+    public function webhooks()
+    {
+        return $this->hasMany(ShopifyWebhooks::class, 'shopify_users_id', 'id');
+    }
+
     public function shopifyAppUsers()
     {
         return $this->hasMany(ShopifyAppUsers::class, 'shopify_users_id', 'id');

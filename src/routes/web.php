@@ -9,3 +9,8 @@ Route::group(['namespace' => 'CultureKings\ShopifyAuth\Http\Controllers'], funct
 Route::group(['namespace' => 'CultureKings\ShopifyAuth\Http\Controllers', 'middleware' => ['web', 'CultureKings\ShopifyAuth\Http\Middleware\ShopifyAuthCheck']], function () {
     Route::get('shopify-auth/{appName}/install/success', 'AuthController@getSuccessPage');
 });
+
+// Webhooks
+Route::group(['namespace' => 'CultureKings\ShopifyAuth\Http\Controllers'], function () {
+	Route::get('webhooks/{appName}/uninstalled', 'AuthController@handleAppUninstallation');
+});

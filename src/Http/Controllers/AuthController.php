@@ -53,7 +53,10 @@ class AuthController
         $shopUrl = $request->get('shop');
 
         // Save into DB
-        $this->shopifyAuthService->getAccessTokenAndCreateNewUser($code, $shopUrl, $shopifyAppConfig);
+        $createUser = $this->shopifyAuthService->getAccessTokenAndCreateNewUser($code, $shopUrl, $shopifyAppConfig);
+
+        // Create webhook to handle uninstallation
+        $this->shopifyAuthService->checkAndAddWebhookForUninstall($appName, $createUser['access_token'], $createUser['user'], $shopifyAppConfig);
 
         // Build query string
         $queryString = [
@@ -72,8 +75,12 @@ class AuthController
         return view($shopifyAppConfig['view_install_success_path']);
     }
 
-    public function disableUserOnUninstallWebhookHandle()
+    public function handleAppUninstallation($appName)
     {
-        // @todo
+        $userApps = ShopifyAppUsers::where('shopify_app_name', $appName)->get();
+
+        foreach ($userApps as $app) {
+            $app->delete();
+        }
     }
 }

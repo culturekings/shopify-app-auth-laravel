@@ -5,6 +5,7 @@ namespace CultureKings\ShopifyAuth\Services;
 use CultureKings\ShopifyAuth\Models\ShopifyApp;
 use CultureKings\ShopifyAuth\Models\ShopifyAppUsers;
 use CultureKings\ShopifyAuth\Models\ShopifyScriptTag;
+use CultureKings\ShopifyAuth\Models\ShopifyWebhooks;
 use CultureKings\ShopifyAuth\Models\ShopifyUser;
 use Illuminate;
 use CultureKings\ShopifyAuth\ShopifyApi;
@@ -60,7 +61,10 @@ class ShopifyAuthService
             'shopify_app_name' => $shopifyAppConfig['name'],
         ]);
 
-        return $shopifyUser;
+        return [
+            'user' => $shopifyUser,
+            'access_token' => $accessToken,
+        ];
     }
 
     public function createScriptTagIfNotInDatabase($shopUrl, $accessToken, $shopifyUser, array $scriptTags, $shopifyAppConfig)
@@ -85,6 +89,36 @@ class ShopifyAuthService
         ]);
 
         return true;
+    }
+
+    public function checkAndAddWebhookForUninstall($appName, $accessToken, $shopifyUser, $shopifyAppConfig)
+    {
+        // if webhook already exists in DB, return true
+        foreach ($shopifyUser->webhooks as $hook) {
+            if ($tag->shopify_app === $shopifyAppConfig['name']) return true;
+        }
+
+        $uninstallWebhook = [
+            "webhook" => [
+                "topic": "app/uninstalled",
+                "address": url('webhooks/' . $appName . '/uninstalled'),
+                "format": "json"
+            ],
+        ];
+
+        ShopifyWebhooks::create([
+            'shop_url' => $shopUrl,
+            'webhook_id' => $scriptTag->get('id'),
+            'shopify_users_id' => $shopifyUser->id,
+            'shopify_app' => $shopifyAppConfig['name'],
+        ]);
+
+        $scriptTag = $this->shopify
+            ->setKey($shopifyAppConfig['key'])
+            ->setSecret($shopifyAppConfig['secret'])
+            ->setShopUrl($shopUrl)
+            ->setAccessToken($accessToken)
+            ->post('admin/webhooks.json', $uninstallWebhook);
     }
 
     // returns user or null
