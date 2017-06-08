@@ -95,7 +95,7 @@ class ShopifyAuthService
     {
         // if webhook already exists in DB, return true
         foreach ($shopifyUser->webhooks as $hook) {
-            if ($tag->shopify_app === $shopifyAppConfig['name']) return true;
+            if ($hook->shopify_app === $shopifyAppConfig['name']) return true;
         }
 
         $uninstallWebhook = [
