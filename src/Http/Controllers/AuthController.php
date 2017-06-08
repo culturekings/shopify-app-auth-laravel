@@ -3,6 +3,8 @@ namespace CultureKings\ShopifyAuth\Http\Controllers;
 
 use CultureKings\ShopifyAuth\Services\ShopifyAuthService;
 use CultureKings\ShopifyAuth\ShopifyApi;
+use CultureKings\ShopifyAuth\Models\ShopifyUser;
+use CultureKings\ShopifyAuth\Models\ShopifyAppUsers;
 use Illuminate\Http\Request;
 
 class AuthController
@@ -28,6 +30,13 @@ class AuthController
 
         $scope = $shopifyAppConfig['scope'];
         $redirectUrl = url($shopifyAppConfig['redirect_url']);
+
+        $user = ShopifyUser::where('shop_url', $shopUrl)->get()->first();
+
+        // if existing user for this app, send to dashboard
+        if ($user !== null && $user->shopifyAppUsers->count()) {
+            return redirect()->to($shopifyAppConfig['dashboard_url']);
+        }
 
         $shopify = $this->shopify
             ->setKey($shopifyAppConfig['key'])
