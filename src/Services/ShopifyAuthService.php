@@ -86,4 +86,17 @@ class ShopifyAuthService
 
         return true;
     }
+
+    // returns user or null
+    public function getUserForApp($shop, $appName)
+    {
+        return ShopifyUser::where('shop_url', $shop)
+            ->with([
+                'shopifyAppUsers' => function ($query) use ($appName) {
+                    $query->where('shopify_app_name', $appName);
+                }
+            ])
+            ->get()
+            ->first();
+    }
 }

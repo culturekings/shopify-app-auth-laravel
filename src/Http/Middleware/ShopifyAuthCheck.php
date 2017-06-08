@@ -3,16 +3,19 @@
 namespace CultureKings\ShopifyAuth\Http\Middleware;
 
 use CultureKings\ShopifyAuth\Models\ShopifyUser;
-use Closure;
 use CultureKings\ShopifyAuth\ShopifyApi;
+use CultureKings\ShopifyAuth\Services\ShopifyAuthService;
+use Closure;
 
 class ShopifyAuthCheck
 {
     protected $shopify;
+    protected $shopifyAuthService;
 
-    public function __construct(ShopifyApi $shopify)
+    public function __construct(ShopifyApi $shopify, ShopifyAuthService $shopifyAuthService)
     {
         $this->shopify = $shopify;
+        $this->shopifyAuthService = $shopifyAuthService;
     }
 
     /**
@@ -42,7 +45,7 @@ class ShopifyAuthCheck
 
         // recheck session if set
         if (null !== ($request->get('shop')) && $request->session()->has('shopifyapp')) {
-            $shopifyUser = $this->getUser($request->get('shop'), $appName);
+            $shopifyUser = $this->shopifyAuthService->getUserForApp($request->get('shop'), $appName);
             $shopifyApp = $shopifyUser->shopifyAppUsers->first();
             $appSession = $request->session()->get('shopifyapp');
 
@@ -54,7 +57,7 @@ class ShopifyAuthCheck
         // If no session, get user & set one
         if (!$request->session()->has('shopifyapp') || $reSetSession) {
             $shopUrl = $request->get('shop');
-            $shopifyUser = $this->getUser($shopUrl, $appName);
+            $shopifyUser = $this->shopifyAuthService->getUserForApp($shopUrl, $appName);
 
             if (!$shopifyUser) {
                 return abort(403, 'No shopify user found and no active sessions');
@@ -85,17 +88,5 @@ class ShopifyAuthCheck
         }
 
         return $next($request);
-    }
-
-    private function getUser($shop, $appName)
-    {
-        return ShopifyUser::where('shop_url', $shop)
-            ->with([
-                'shopifyAppUsers' => function ($query) use ($appName) {
-                    $query->where('shopify_app_name', $appName);
-                }
-            ])
-            ->get()
-            ->first();
     }
 }
