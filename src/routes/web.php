@@ -13,4 +13,5 @@ Route::group(['namespace' => 'CultureKings\ShopifyAuth\Http\Controllers', 'middl
 // Webhooks
 Route::group(['namespace' => 'CultureKings\ShopifyAuth\Http\Controllers'], function () {
 	Route::get('webhooks/{appName}/uninstalled', 'AuthController@handleAppUninstallation');
+	Route::post('webhooks/{appName}/uninstalled', 'AuthController@handleAppUninstallation');
 });
