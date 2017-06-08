@@ -5,6 +5,7 @@ use CultureKings\ShopifyAuth\Services\ShopifyAuthService;
 use CultureKings\ShopifyAuth\ShopifyApi;
 use CultureKings\ShopifyAuth\Models\ShopifyUser;
 use CultureKings\ShopifyAuth\Models\ShopifyAppUsers;
+use CultureKings\ShopifyAuth\Models\ShopifyWebhooks;
 use Illuminate\Http\Request;
 
 class AuthController
@@ -77,10 +78,16 @@ class AuthController
 
     public function handleAppUninstallation($appName)
     {
-        $userApps = ShopifyAppUsers::where('shopify_app_name', $appName)->get();
+        \Log::info('handle uninstall webhook');
 
+        $userApps = ShopifyAppUsers::where('shopify_app_name', $appName)->get();
         foreach ($userApps as $app) {
             $app->delete();
+        }
+
+        $hooks = ShopifyWebhooks::where('shopify_app', $appName)->get();
+        foreach ($hooks as $hook) {
+            $hook->delete();
         }
     }
 }
