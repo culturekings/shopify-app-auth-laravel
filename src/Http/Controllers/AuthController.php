@@ -78,15 +78,14 @@ class AuthController
 
     public function handleAppUninstallation(Request $request, $appName)
     {
-        $shopUrl = $request->get('shop');
+        $shopUrl = $request->get('domain');
 
         \Log::info('handle uninstall webhook');
 
         $user = ShopifyUser::where('shop_url', $shopUrl)->get()->first();
 
-        \Log::debug('test', [
+        \Log::debug('Uninstall log', [
             'user' => $user,
-            'shop_url' => $shopUrl,
             'request' => $request->all(),
             'app name' => $appName,
         ]);
@@ -97,14 +96,6 @@ class AuthController
         ])->get();
         foreach ($userApps as $app) {
             $app->delete();
-        }
-
-        $hooks = ShopifyWebhooks::where([
-            'shopify_app' => $appName,
-            'shopify_users_id' => $user->id,
-        ])->get();
-        foreach ($hooks as $hook) {
-            $hook->delete();
         }
     }
 }
