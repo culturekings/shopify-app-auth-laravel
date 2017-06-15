@@ -6,6 +6,7 @@ use CultureKings\ShopifyAuth\ShopifyApi;
 use CultureKings\ShopifyAuth\Models\ShopifyUser;
 use CultureKings\ShopifyAuth\Models\ShopifyAppUsers;
 use CultureKings\ShopifyAuth\Models\ShopifyWebhooks;
+use CultureKings\ShopifyAuth\Models\ShopifyScriptTag;
 use Illuminate\Http\Request;
 
 class AuthController
@@ -87,15 +88,28 @@ class AuthController
         \Log::debug('Uninstall log', [
             'user' => $user,
             'request' => $request->all(),
-            'app name' => $appName,
+            'app_name' => $appName,
         ]);
 
+        // remove app users
         $userApps = ShopifyAppUsers::where([
             'shopify_app_name' => $appName,
             'shopify_users_id' => $user->id,
         ])->get();
+
         foreach ($userApps as $app) {
             $app->delete();
         }
+
+        // remove script tags
+        $tags = ShopifyScriptTag::where([
+            'shop_url' => $shopUrl,
+            'shopify_app' => $appName,
+        ])->get();
+        
+        foreach ($tags as $tag) {
+            $tag->delete();
+        }
+
     }
 }
