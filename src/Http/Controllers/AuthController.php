@@ -32,11 +32,14 @@ class AuthController
 
         $scope = $shopifyAppConfig['scope'];
         $redirectUrl = url($shopifyAppConfig['redirect_url']);
+        $appName = $shopifyAppConfig['name'];
 
-        $user = ShopifyUser::where('shop_url', $shopUrl)->get()->first();
+        $user = ShopifyUser::where('shop_url', $shopUrl)->whereHas('shopifyAppUsers', function($query) use ($appName) {
+            $query->whereShopifyAppName($appName);
+        })->get();
 
         // if existing user for this app, send to dashboard
-        if ($user !== null && $user->shopifyAppUsers->count()) {
+        if ($user !== null && !$user->isEmpty() && $user->shopifyAppUsers->count()) {
             return redirect()->to($shopifyAppConfig['dashboard_url']);
         }
 
